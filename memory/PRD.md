@@ -28,6 +28,17 @@
 - i18n
   - Full Indonesian across sidebar, topbar, hero, summary, panels, all modals, mobile nav, login, boot overlay, and common JS toasts.
 
+## Implemented (2026-06, sesi 2) — Rombak total UI/UX "Endfield Signal Yellow" v4.0
+- User choices: palet Signal Yellow #FFF500 + ink black + aksen cyan #14D0D0, light mode versi kertas #F6F6F3, layout baru (sidebar rail ramping + hero bento + tipografi besar), sudut tajam (radius 0).
+- `dashboard.css` ditulis ulang total (~1.1k baris, sebelumnya 7.6k): design tokens di `:root` + override `body.theme-light`; font Chakra Petch (display) / IBM Plex Sans (body) / JetBrains Mono (data).
+- Sidebar rail 84px (ikon + avatar huruf akun dengan titik freshness), expand ke 272px saat hover/focus-within di desktop; drawer off-canvas di <980px.
+- Hero bento: blok kuning besar "PUSAT KOMANDO" + hazard stripe, 3 tile status; 4 summary tiles; panel 01–04 dengan nomor outline.
+- Login: split layout poster kuning (kiri) + kartu PIN (kanan); boot overlay hitam dengan progress kuning.
+- Modal/overlay, notifikasi, toast, mobile bottom-nav, semua di-restyle. Hazard stripe sebagai motif di atas modal.
+- `dashboard.js`: markup avatar di `renderAccountList()`, warna progress operasi & grafik riwayat ke kuning/cyan, meta theme-color; fix `#bottomAlerts` (stopPropagation) agar panel notifikasi bisa dibuka dari bottom-nav.
+- `index.html`: font link baru, meta theme-color, hero markup (badge "Protocol 4.0", hero-stripe, hero-serial), cache-bust `?v=20260913-endfield40`. `manifest.webmanifest` theme_color kuning.
+- Test: `/app/test_reports/iteration_2.json` — frontend pass (login, tema, 6 modal, notif, data GAS, switch akun, mobile 390px tanpa overflow, logout).
+
 ## Backlog / Next
 - P1: Translate remaining long-tail JS strings (diagnostics detail values, some status lines).
 - P1: Optional in-app "Change PIN" flow (currently config.js only).

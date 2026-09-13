@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07090d">
+  <meta name="theme-color" content="#0c0d0c">
 
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://script.google.com https://script.googleusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://web-api.gryphline.com; frame-src https://script.google.com https://script.googleusercontent.com https://endfield.gryphline.com https://zonai.skport.com; form-action 'self' https://script.google.com https://script.googleusercontent.com; worker-src 'self'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -15,17 +15,17 @@
         href="https://cdn2.cdnstep.com/uZonBNFhuQtCPjNRKuWd/cover-2.thumb256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
         rel="stylesheet">
   <link rel="manifest" href="./manifest.webmanifest?v=30">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="application-name" content="Endfield Protocol">
-  <link rel="stylesheet" href="./dashboard.css?v=20260724-reliability312">
+  <link rel="stylesheet" href="./dashboard.css?v=20260913-endfield40">
 </head>
 
-<body class="endfield-nexus-2026 is-loading-dashboard">
+<body class="endfield-nexus-2026 endfield-signal is-loading-dashboard">
   <script>
     (function () {
       try {
@@ -321,7 +321,7 @@
 
         <div class="brand-copy">
           <span class="brand-title">Endfield <span class="brand-slash">//</span> Protocol</span>
-          <span class="brand-beta">2.6</span>
+          <span class="brand-beta">v4.0</span>
         </div>
 
         <button
@@ -496,21 +496,24 @@
             </div>
             <button id="recheckBackendButton" type="button">Periksa Ulang</button>
           </div>
-          <section class="page-heading command-hero">
+          <section class="page-heading command-hero" data-testid="command-hero">
             <div class="command-hero-copy">
               <span class="hero-kicker">
                 ENDFIELD INDUSTRIES // JARINGAN OPERATOR
               </span>
 
               <div class="page-title-row">
-                <h1>Pusat Komando</h1>
-                <span class="badge">Reliability 3.1.2</span>
+                <h1>Pusat<br>Komando</h1>
+                <span class="badge">Protocol 4.0</span>
               </div>
 
               <p>
                 Telemetri akun langsung, kontrol energi,
                 pemantauan tugas, dan protokol absensi.
               </p>
+
+              <div class="hero-stripe" aria-hidden="true"></div>
+              <span class="hero-serial" aria-hidden="true">EF-IND // 0426</span>
             </div>
 
             <div class="hero-status-grid">
@@ -1483,7 +1486,7 @@
     </form>
   </div>
 
-  <script src="./config.js?v=20260724-reliability312"></script>
-  <script src="./dashboard.js?v=20260724-reliability312"></script>
+  <script src="./config.js?v=20260913-endfield40"></script>
+  <script src="./dashboard.js?v=20260913-endfield40"></script>
 </body>
 </html>

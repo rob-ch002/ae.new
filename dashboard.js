@@ -25,7 +25,7 @@ function applyTheme(theme) {
     );
   }
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", isLight ? "#e9edf3" : "#07090d");
+  if (meta) meta.setAttribute("content", isLight ? "#f6f6f3" : "#0c0d0c");
 }
 
 function initThemeToggle() {
@@ -1019,7 +1019,10 @@ function renderAccountList() {
                 : ""
             }"
             type="button"
-            data-account="${escapeHtml(account.slug)}">
+            data-account="${escapeHtml(account.slug)}"
+            title="${escapeHtml(accountDisplayName(account))}">
+            <span class="account-mini-avatar ${freshnessForAccount(account).key}" aria-hidden="true">${escapeHtml(accountDisplayName(account).trim().charAt(0).toUpperCase() || "?")}</span>
+            <span class="account-mini-copy">
             <span class="account-mini-name">
               ${escapeHtml(accountDisplayName(account))}
             </span>
@@ -1034,6 +1037,7 @@ function renderAccountList() {
               • Lv.${escapeHtml(level)}
             </span>
             <span class="account-mini-freshness ${freshnessForAccount(account).key}">${freshnessForAccount(account).label}</span>
+            </span>
           </button>
 
           ${
@@ -2483,14 +2487,14 @@ function operationColorForProgress(progress) {
     Math.max(0, Math.min(100, progress));
 
   if (clamped >= 82) {
-    return "#ffbe63";
+    return "#fff500";
   }
 
   if (clamped >= 48) {
-    return "#ff6b52";
+    return "#e0d500";
   }
 
-  return "#ff344d";
+  return "#14d0d0";
 }
 
 function paintOperationProgress(
@@ -2683,8 +2687,8 @@ async function finishOperationProgress(
 
   const statusColor =
     successful
-      ? "#35e58b"
-      : "#ff3048";
+      ? "#58e08a"
+      : "#ff4a3d";
 
   getOperationButtons(
     operationName
@@ -5065,7 +5069,7 @@ function createHistoryChart(points) {
   const line = coords.map(pair => pair.map(value => value.toFixed(1)).join(",")).join(" ");
   const area = `${pad},${height-pad} ${line} ${width-pad},${height-pad}`;
   svg.innerHTML = `
-    <defs><linearGradient id="historyAreaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff344d"/><stop offset="1" stop-color="#ff344d" stop-opacity="0"/></linearGradient></defs>
+    <defs><linearGradient id="historyAreaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff500"/><stop offset="1" stop-color="#fff500" stop-opacity="0"/></linearGradient></defs>
     ${[0,1,2,3,4].map(index => `<line class="grid" x1="${pad}" x2="${width-pad}" y1="${pad + index*(height-pad*2)/4}" y2="${pad + index*(height-pad*2)/4}"/>`).join("")}
     <polygon class="area" points="${area}"/>
     <polyline class="line" points="${line}"/>
@@ -5324,7 +5328,7 @@ function bindAccountManagerAndDiagnostics() {
   $("#bottomDashboard").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   $("#bottomAccounts").addEventListener("click", () => openAccountManager());
   $("#bottomCheckin").addEventListener("click", runCheckin);
-  $("#bottomAlerts").addEventListener("click", () => toggleNotificationPanel(true));
+  $("#bottomAlerts").addEventListener("click", event => { event.stopPropagation(); toggleNotificationPanel(); });
   $("#bottomSettings").addEventListener("click", openSettingsCenter);
 }
 
