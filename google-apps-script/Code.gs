@@ -1,30 +1,77 @@
-const BASE_PROFILES = [
-  {
-    account_token: "EtPYmtW+xFXJpV5CtBK4Y9Ap",
-    id: "4468761606",
-    server: "2",
-    language: "en",
-    accountName: "Muzaka"
-  },
-  {
-    account_token: "oczYQya1csPPEcpzriAnTIUn",
-    id: "4896434342",
-    server: "2",
-    language: "en",
-    accountName: "Orion"
-  },
-  {
-    account_token: "Dw2W7cTTxS8PcEZaAxaQmnXx",
-    id: "4367542843",
-    server: "2",
-    language: "en",
-    accountName: "Naskara"
-  }
-];
+/*
+ * ============================================================
+ * KEAMANAN: KREDENSIAL TIDAK LAGI DI-HARDCODE
+ * ============================================================
+ * Token akun, webhook Discord, dan ID Discord kini dibaca dari
+ * Script Properties, bukan ditulis langsung di kode ini. Ini
+ * mencegah kebocoran token saat repository dibagikan atau
+ * di-hosting sebagai situs statis.
+ *
+ * Jalankan fungsi setupSecrets() SEKALI dari editor Apps Script
+ * (Run > setupSecrets) setelah mengisi nilai di bawah, lalu HAPUS
+ * kembali nilainya agar tidak tersimpan di dalam kode.
+ *
+ *   Script Properties yang digunakan:
+ *   - ENDFIELD_BASE_PROFILES  : JSON array profil bawaan
+ *   - ENDFIELD_DISCORD_WEBHOOK : URL webhook Discord (opsional)
+ *   - ENDFIELD_DISCORD_USER_ID : ID pengguna Discord (opsional)
+ *   - ENDFIELD_DISCORD_NOTIFY  : "1" untuk mengaktifkan notifikasi
+ */
 
-const discord_notify = true;
-const myDiscordID = "1004215676208156722";
-const discordWebhook = "https://discordapp.com/api/webhooks/1502346685291171910/Y5egIJmMzuol81UHwkuzU_BGj9JUVKhEy7OAFsAwxPjyS3T0h0_S7HKOMXBehTX2azUe";
+function getScriptSecret_(key, fallback) {
+  try {
+    const value = PropertiesService.getScriptProperties().getProperty(key);
+    return value === null || value === undefined ? fallback : value;
+  } catch (_) {
+    return fallback;
+  }
+}
+
+function loadBaseProfiles_() {
+  const raw = getScriptSecret_("ENDFIELD_BASE_PROFILES", "");
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter(profile =>
+          profile && profile.account_token && profile.id && profile.server)
+      : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+/*
+ * Isi nilai di bawah HANYA saat menjalankan setupSecrets(), lalu
+ * kosongkan kembali. Nilai default sengaja dibiarkan kosong.
+ */
+function setupSecrets() {
+  const baseProfiles = [
+    // { account_token: "TOKEN", id: "ROLE_ID", server: "2", language: "en", accountName: "Nama" }
+  ];
+  const discordWebhookUrl = "";
+  const discordUserId = "";
+
+  const properties = PropertiesService.getScriptProperties();
+  const writes = {};
+  if (baseProfiles.length) writes.ENDFIELD_BASE_PROFILES = JSON.stringify(baseProfiles);
+  if (discordWebhookUrl) writes.ENDFIELD_DISCORD_WEBHOOK = discordWebhookUrl;
+  if (discordUserId) writes.ENDFIELD_DISCORD_USER_ID = discordUserId;
+  writes.ENDFIELD_DISCORD_NOTIFY = discordWebhookUrl ? "1" : "0";
+  properties.setProperties(writes);
+
+  return {
+    success: true,
+    message: "Secrets tersimpan. Hapus kembali nilai di setupSecrets() sekarang."
+  };
+}
+
+const BASE_PROFILES = loadBaseProfiles_();
+
+const discordWebhook = getScriptSecret_("ENDFIELD_DISCORD_WEBHOOK", "");
+const myDiscordID = getScriptSecret_("ENDFIELD_DISCORD_USER_ID", "");
+const discord_notify =
+  getScriptSecret_("ENDFIELD_DISCORD_NOTIFY", "0") === "1" && Boolean(discordWebhook);
 
 const APP_CODE = "6eb76d4e13aa36e6";
 const BASE_URL = "https://zonai.skport.com/web/v1";

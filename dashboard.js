@@ -12,6 +12,39 @@ const REQUEST_TIMEOUT_MS = Math.max(
 );
 const PIN_SHA256 = String(CONFIG.pinSha256 || "");
 
+const THEME_STORAGE_KEY = "endfield_theme";
+
+function applyTheme(theme) {
+  const isLight = theme === "light";
+  document.body.classList.toggle("theme-light", isLight);
+  const button = document.getElementById("themeToggleButton");
+  if (button) {
+    button.setAttribute(
+      "aria-label",
+      isLight ? "Aktifkan mode gelap" : "Aktifkan mode terang"
+    );
+  }
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", isLight ? "#e9edf3" : "#07090d");
+}
+
+function initThemeToggle() {
+  let stored = "dark";
+  try { stored = localStorage.getItem(THEME_STORAGE_KEY) || "dark"; } catch (_) {}
+  applyTheme(stored);
+
+  const button = document.getElementById("themeToggleButton");
+  if (button) {
+    button.addEventListener("click", () => {
+      const next = document.body.classList.contains("theme-light") ? "dark" : "light";
+      try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch (_) {}
+      applyTheme(next);
+    });
+  }
+}
+
+initThemeToggle();
+
 const SESSION_KEY = "endfield_protocol_authorized";
 const SELECTED_ACCOUNT_KEY = "endfield_selected_account";
 const NOTIFICATION_STORAGE_KEY =
@@ -78,16 +111,17 @@ const RELIABILITY_ACTIONS = new Set([
   "ackpush"
 ]);
 
-const FALLBACK_ACCOUNTS = [
-  { slug: "muzaka" },
-  { slug: "orion" },
-  { slug: "naskara" }
-];
+/*
+ * Akun bawaan kini dikelola sepenuhnya oleh backend (Script Properties).
+ * Frontend tidak lagi menyimpan slug akun apa pun secara hardcode.
+ */
+const FALLBACK_ACCOUNTS = [];
 
 const state = {
   selectedSlug:
     localStorage.getItem(SELECTED_ACCOUNT_KEY) ||
-    FALLBACK_ACCOUNTS[0].slug,
+    (FALLBACK_ACCOUNTS[0] && FALLBACK_ACCOUNTS[0].slug) ||
+    null,
   data: null,
   autoTimer: null,
   countdownTimer: null,
@@ -365,7 +399,7 @@ async function refreshBackendCompatibility({ force = false, silent = false } = {
     if (!silent && !state.backendCompatibility.compatible) {
       showToast({
         type: "warning",
-        title: "Backend update required",
+        title: "Backend perlu diperbarui",
         message: backendUpdateMessage(state.backendCompatibility),
         duration: 11000
       });
@@ -784,12 +818,22 @@ function notificationSettingsForAccount(account) {
   };
 }
 
+const EMPTY_ACCOUNT = {
+  slug: null,
+  slot_index: 0,
+  display_name: null,
+  settings: {},
+  profile: {},
+  live: {},
+  errors: []
+};
+
 function selectedAccount() {
+  const entries = allAccountEntries();
   return (
-    allAccountEntries().find(
-      account => account.slug === state.selectedSlug
-    ) ||
-    allAccountEntries()[0]
+    entries.find(account => account.slug === state.selectedSlug) ||
+    entries[0] ||
+    EMPTY_ACCOUNT
   );
 }
 
@@ -833,13 +877,34 @@ function setAuthorized(authorized) {
   }
 }
 
+const LOGIN_LOCK_KEY = "endfield_login_lock_v1";
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCK_MS = 60000;
+
+function readLoginLock() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LOGIN_LOCK_KEY) || "null");
+    if (parsed && typeof parsed === "object") return parsed;
+  } catch (_) {}
+  return { fails: 0, lockUntil: 0 };
+}
+
+function writeLoginLock(value) {
+  try { localStorage.setItem(LOGIN_LOCK_KEY, JSON.stringify(value)); } catch (_) {}
+}
+
+function loginLockRemainingMs() {
+  const lock = readLoginLock();
+  return Math.max(0, Number(lock.lockUntil || 0) - Date.now());
+}
+
 $("#pinInput").addEventListener("input", event => {
   event.target.value =
     event.target.value.replace(/\D/g, "").slice(0, 6);
 
   $("#loginMessage").className = "login-message";
   $("#loginMessage").textContent =
-    "STATUS: AWAITING AUTHORIZATION";
+    "STATUS: MENUNGGU OTORISASI";
 });
 
 $("#loginForm").addEventListener("submit", async event => {
@@ -849,9 +914,18 @@ $("#loginForm").addEventListener("submit", async event => {
   const message = $("#loginMessage");
   const button = $("#loginButton");
 
+  const remaining = loginLockRemainingMs();
+  if (remaining > 0) {
+    input.value = "";
+    message.textContent =
+      `AKSES DIKUNCI: Coba lagi dalam ${Math.ceil(remaining / 1000)} detik.`;
+    message.classList.add("error");
+    return;
+  }
+
   if (!/^\d{6}$/.test(input.value)) {
     message.textContent =
-      "ACCESS DENIED: PIN wajib 6 digit.";
+      "AKSES DITOLAK: PIN wajib 6 digit.";
     message.classList.add("error");
     return;
   }
@@ -862,25 +936,39 @@ $("#loginForm").addEventListener("submit", async event => {
   );
 
   message.textContent =
-    "STATUS // AUTHENTICATING...";
+    "STATUS // MENGOTENTIKASI...";
 
   try {
     const hash = await sha256Text(input.value);
 
     if (hash !== PIN_SHA256) {
       input.value = "";
-      message.textContent =
-        "ACCESS DENIED: PIN salah.";
+
+      const lock = readLoginLock();
+      lock.fails = Number(lock.fails || 0) + 1;
+      if (lock.fails >= LOGIN_MAX_ATTEMPTS) {
+        lock.lockUntil = Date.now() + LOGIN_LOCK_MS;
+        lock.fails = 0;
+        writeLoginLock(lock);
+        message.textContent =
+          `AKSES DIKUNCI: Terlalu banyak percobaan. Tunggu ${Math.round(LOGIN_LOCK_MS / 1000)} detik.`;
+      } else {
+        writeLoginLock(lock);
+        const left = LOGIN_MAX_ATTEMPTS - lock.fails;
+        message.textContent =
+          `AKSES DITOLAK: PIN salah. Sisa ${left} percobaan.`;
+      }
       message.classList.add("error");
       return;
     }
 
+    writeLoginLock({ fails: 0, lockUntil: 0 });
     setAuthorized(true);
     input.value = "";
 
     showToast({
       type: "success",
-      title: "Access granted",
+      title: "Akses diberikan",
       message: "Dashboard operator berhasil dibuka."
     });
 
@@ -903,7 +991,7 @@ $("#logoutButton").addEventListener("click", () => {
   setAuthorized(false);
   $("#pinInput").value = "";
   $("#loginMessage").textContent =
-    "STATUS: SESSION CLOSED";
+    "STATUS: SESI DITUTUP";
 });
 
 function isLinkedAccountSlug(slug) {
@@ -2751,7 +2839,7 @@ async function syncState({
 
       showToast({
         type: "success",
-        title: "Telemetry synchronized",
+        title: "Telemetri tersinkron",
         message:
           "Level, Operator, Exploration, Energy, dan Mission Progress sudah diperiksa."
       });
@@ -2771,7 +2859,7 @@ async function syncState({
 
     if (manual && !navigator.onLine) {
       await addQueuedOperation("sync", {});
-      showToast({ type: "warning", title: "Sync queued", message: "Perangkat offline. Sync akan dicoba lagi saat koneksi kembali." });
+      showToast({ type: "warning", title: "Sinkron masuk antrean", message: "Perangkat offline. Sync akan dicoba lagi saat koneksi kembali." });
     }
 
     if (
@@ -2830,7 +2918,7 @@ async function syncSelectedAccount() {
   const slug = state.selectedSlug;
   const button = $("#syncSelectedButton");
   if (!slug || state.requestInProgress) {
-    showToast({ type: "info", title: "Sync queued", message: "Tunggu sinkronisasi aktif selesai.", duration: 3200 });
+    showToast({ type: "info", title: "Sinkron masuk antrean", message: "Tunggu sinkronisasi aktif selesai.", duration: 3200 });
     return;
   }
   state.requestInProgress = true;
@@ -2839,9 +2927,9 @@ async function syncSelectedAccount() {
     const response = await gasRequestWithRetry("syncaccount", { slug }, 3);
     const dashboardState = normalizeDashboardPayload(response);
     applyDashboardState(dashboardState, "manual");
-    showToast({ type: "success", title: "Account synchronized", message: `${accountDisplayName(selectedAccount())} berhasil diperbarui.` });
+    showToast({ type: "success", title: "Akun tersinkron", message: `${accountDisplayName(selectedAccount())} berhasil diperbarui.` });
   } catch (error) {
-    showToast({ type: "error", title: "Account sync failed", message: error?.message || "Gagal menyinkronkan akun." });
+    showToast({ type: "error", title: "Sinkron akun gagal", message: error?.message || "Gagal menyinkronkan akun." });
   } finally {
     state.requestInProgress = false;
     button.disabled = false;
@@ -3007,7 +3095,7 @@ function summarizeCheckinResponse(response) {
   ) {
     return {
       type: "error",
-      title: "Check-in failed",
+      title: "Absen gagal",
       message:
         response?.message ||
         "Respons Google Apps Script tidak valid."
@@ -3047,7 +3135,7 @@ function summarizeCheckinResponse(response) {
   if (hasError) {
     return {
       type: "error",
-      title: "Some accounts failed",
+      title: "Beberapa akun gagal",
       message: rows
         .map(row =>
           `${row.isError ? "✕" : "✓"} ` +
@@ -3060,7 +3148,7 @@ function summarizeCheckinResponse(response) {
   if (allAlready) {
     return {
       type: "info",
-      title: "Already checked in today",
+      title: "Sudah absen hari ini",
       message: rows
         .map(row =>
           `${row.name}: sudah check-in.`
@@ -3071,7 +3159,7 @@ function summarizeCheckinResponse(response) {
 
   return {
     type: "success",
-    title: "Check-in completed",
+    title: "Absen selesai",
     message: rows
       .map(row =>
         `${row.name}: ${row.text}`
@@ -3095,7 +3183,7 @@ async function runCheckin() {
 
   showToast({
     type: "info",
-    title: "Check-in processing",
+    title: "Absen diproses",
     message:
       "Menghubungkan seluruh akun ke layanan attendance Endfield.",
     duration: 3500
@@ -3117,7 +3205,7 @@ async function runCheckin() {
           addGameNotification({
             type: "activity",
             accountSlug: account.slug,
-            title: "Check-in failed",
+            title: "Absen gagal",
             message: `${accountDisplayName(account)}: periksa hasil check-in.`,
             toastType: "error"
           });
@@ -3148,11 +3236,11 @@ async function runCheckin() {
   } catch (error) {
     if (!navigator.onLine) {
       await addQueuedOperation("run", {});
-      showToast({ type: "warning", title: "Check-in queued", message: "Perangkat offline. Check-in akan dicoba kembali saat koneksi tersedia." });
+      showToast({ type: "warning", title: "Absen masuk antrean", message: "Perangkat offline. Check-in akan dicoba kembali saat koneksi tersedia." });
     }
     showToast({
       type: "error",
-      title: "Check-in failed",
+      title: "Absen gagal",
       message:
         error?.message ||
         "Tidak dapat terhubung ke Google Apps Script.",
@@ -3308,7 +3396,7 @@ async function copyCurrentUid() {
 
     showToast({
       type: "success",
-      title: "UID copied",
+      title: "UID disalin",
       message: `UID ${uid} berhasil disalin.`,
       duration: 2200
     });
@@ -4068,7 +4156,7 @@ async function saveManagerSettings() {
     }, 2);
     applyDashboardState(normalizeDashboardPayload(response), "manual");
     renderAccountManager();
-    showToast({ type: "success", title: "Account settings saved", message: "Nama, primary account, dan notifikasi diperbarui." });
+    showToast({ type: "success", title: "Setelan akun tersimpan", message: "Nama, primary account, dan notifikasi diperbarui." });
   } catch (error) {
     $("#managerStatus").textContent = error?.message || "Save failed";
   }
@@ -4084,7 +4172,7 @@ async function reorderManagerAccount(direction) {
     const response = await gasRequestWithRetry("reorderaccounts", { order: accounts.map(account => account.slug).join(",") }, 2);
     applyDashboardState(normalizeDashboardPayload(response), "manual");
     renderAccountManager();
-  } catch (error) { showToast({ type: "error", title: "Reorder failed", message: error?.message || "Gagal mengurutkan akun." }); }
+  } catch (error) { showToast({ type: "error", title: "Pengurutan gagal", message: error?.message || "Gagal mengurutkan akun." }); }
 }
 
 async function updateManagerToken() {
@@ -4096,7 +4184,7 @@ async function updateManagerToken() {
     applyDashboardState(response.state, "manual");
     $("#managerTokenResponse").value = "";
     renderAccountManager();
-    showToast({ type: "success", title: "Token updated", message: "Token akun berhasil diperbarui." });
+    showToast({ type: "success", title: "Token diperbarui", message: "Token akun berhasil diperbarui." });
   } catch (error) { $("#managerStatus").textContent = error?.message || "Token update failed"; }
 }
 
@@ -4174,7 +4262,7 @@ async function clearAppCache() {
     const keys = await caches.keys();
     await Promise.all(keys.map(key => caches.delete(key)));
   }
-  showToast({ type: "success", title: "App cache cleared", message: "Muat ulang halaman untuk mengambil versi terbaru." });
+  showToast({ type: "success", title: "Cache aplikasi dibersihkan", message: "Muat ulang halaman untuk mengambil versi terbaru." });
 }
 
 function accountBySlug(slug) {
@@ -4430,11 +4518,12 @@ async function deleteLinkedAccount() {
     ) {
       state.selectedSlug =
         remainingSlugs[0] ||
-        FALLBACK_ACCOUNTS[0].slug;
+        (FALLBACK_ACCOUNTS[0] && FALLBACK_ACCOUNTS[0].slug) ||
+        null;
 
       localStorage.setItem(
         SELECTED_ACCOUNT_KEY,
-        state.selectedSlug
+        state.selectedSlug || ""
       );
     }
 
@@ -4731,7 +4820,7 @@ async function registerLocalPasskey() {
     createdAt: new Date().toISOString()
   }));
   updatePasskeyUi();
-  showToast({ type: "success", title: "Device passkey registered", message: "Perangkat ini dapat membuka dashboard tanpa mengetik PIN." });
+  showToast({ type: "success", title: "Passkey perangkat terdaftar", message: "Perangkat ini dapat membuka dashboard tanpa mengetik PIN." });
 }
 
 async function unlockWithLocalPasskey() {
@@ -4843,7 +4932,7 @@ async function enableWebPush() {
   if (!response?.success) throw new Error(response?.message || "Push subscription gagal disimpan.");
   state.pushSubscription = subscription;
   await refreshPushStatus();
-  showToast({ type: "success", title: "Web Push enabled", message: "Subscription tersimpan. Scheduled push worker dapat mengirim alert saat dashboard ditutup." });
+  showToast({ type: "success", title: "Web Push aktif", message: "Subscription tersimpan. Scheduled push worker dapat mengirim alert saat dashboard ditutup." });
 }
 
 async function disableWebPush() {

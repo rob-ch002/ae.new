@@ -30,7 +30,11 @@ window.ENDFIELD_CONFIG = Object.freeze({
   /* Isi dengan public VAPID key dari GitHub secret VAPID_PUBLIC_KEY. */
   pushVapidPublicKey: "BGtkbcjrO12YMoDuq2sCQeHlu47uPx3SHTgFKZFYiBW8Qr0D9vgyZSZPdw6_4ZFEI9Snk1VEAj2qTYI1I1YxBXE",
 
-  // PIN default: 123456
+  // PIN default: 123456 — WAJIB DIGANTI sebelum dipublikasikan.
+  // Buat hash SHA-256 baru dari PIN 6 digit pilihanmu, lalu tempel di sini.
+  // Contoh (terminal): echo -n "654321" | sha256sum
+  // Catatan keamanan: validasi PIN berjalan di sisi browser (statis).
+  // Dashboard juga mengunci sementara setelah 5 percobaan gagal.
   pinSha256:
     "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
 });

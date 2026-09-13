@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#07090d">
 
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://script.google.com https://script.googleusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://web-api.gryphline.com; frame-src https://script.google.com https://script.googleusercontent.com https://endfield.gryphline.com https://zonai.skport.com; form-action 'self' https://script.google.com https://script.googleusercontent.com; worker-src 'self'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
   <title>Endfield Protocol Dashboard</title>
 
   <link rel="icon" type="image/png"
@@ -22,6 +26,15 @@
 </head>
 
 <body class="endfield-nexus-2026 is-loading-dashboard">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("endfield_theme") === "light") {
+          document.body.classList.add("theme-light");
+        }
+      } catch (e) {}
+    })();
+  </script>
   <svg
     class="nexus-icon-sprite"
     aria-hidden="true"
@@ -230,6 +243,15 @@
       <path d="M8.5 8.6A9.7 9.7 0 0 1 21 10"></path>
       <path d="M4 10a13 13 0 0 1 2.2-1.6M7.5 14a6.5 6.5 0 0 1 7.5-.8M10.5 18a2.5 2.5 0 0 1 3 0"></path>
     </symbol>
+
+    <symbol id="nx-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4.2"></circle>
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"></path>
+    </symbol>
+
+    <symbol id="nx-moon" viewBox="0 0 24 24">
+      <path d="M20 14.5A8 8 0 0 1 9.5 4a7 7 0 1 0 10.5 10.5Z"></path>
+    </symbol>
   </svg>
   <div
     id="bootOverlay"
@@ -251,10 +273,10 @@
       </div>
 
       <div class="boot-copy">
-        <span>OPERATOR LINK // INITIALIZATION</span>
-        <h1>Establishing neural telemetry</h1>
+        <span>TAUTAN OPERATOR // INISIALISASI</span>
+        <h1>Menyiapkan telemetri neural</h1>
         <p id="bootStatusText">
-          Loading interface modules...
+          Memuat modul antarmuka...
         </p>
       </div>
 
@@ -273,9 +295,9 @@
       </div>
 
       <div class="boot-diagnostics">
-        <span>AUTH NODE</span>
+        <span>NODE OTENTIKASI</span>
         <span>TELEMETRY</span>
-        <span>ACCOUNT GRID</span>
+        <span>GRID AKUN</span>
       </div>
     </section>
   </div>
@@ -284,7 +306,7 @@
 
   <div id="offlineBanner" class="offline-banner" hidden>
     <svg class="nexus-icon" aria-hidden="true"><use href="#nx-wifi-off"></use></svg>
-    <span>Offline mode — cached interface is active.</span>
+    <span>Mode offline — antarmuka tersimpan sedang aktif.</span>
   </div>
 
   <div class="app-shell">
@@ -314,14 +336,14 @@
       </div>
 
       <nav class="sidebar-nav">
-        <div class="nav-label">Control Panel</div>
+        <div class="nav-label">Panel Kontrol</div>
 
         <button class="nav-button active" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-dashboard"></use></svg></span>
-          <span>Dashboard</span>
+          <span>Dasbor</span>
         </button>
 
-        <div class="nav-label">Registered Accounts</div>
+        <div class="nav-label">Akun Terdaftar</div>
         <div id="accountMiniList" class="account-mini-list"></div>
 
         <button
@@ -329,51 +351,51 @@
           class="nav-button connect-account-nav"
           type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-account-add"></use></svg></span>
-          <span>Connect Account</span>
+          <span>Tautkan Akun</span>
         </button>
 
         <button id="accountManagerButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-accounts"></use></svg></span>
-          <span>Account Manager</span>
+          <span>Manajer Akun</span>
         </button>
 
         <button id="diagnosticsButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-diagnostics"></use></svg></span>
-          <span>System Diagnostics</span>
+          <span>Diagnostik Sistem</span>
         </button>
 
         <button id="historyButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-history"></use></svg></span>
-          <span>History Center</span>
+          <span>Pusat Riwayat</span>
         </button>
 
         <button id="tokenHealthButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-shield"></use></svg></span>
-          <span>Token Health</span>
+          <span>Kesehatan Token</span>
         </button>
 
         <button id="settingsCenterButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-settings"></use></svg></span>
-          <span>Reliability Settings</span>
+          <span>Pengaturan Keandalan</span>
         </button>
 
-        <div class="nav-label">Actions</div>
+        <div class="nav-label">Aksi</div>
 
         <button id="sidebarCheckinButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-daily-check"></use></svg></span>
-          <span>Check-in</span>
+          <span>Absen</span>
         </button>
 
         <button id="sidebarRefreshButton" class="nav-button" type="button">
           <span class="nav-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-sync"></use></svg></span>
-          <span>Refresh Data</span>
+          <span>Segarkan Data</span>
         </button>
       </nav>
 
       <div class="sidebar-footer">
         <button id="logoutButton" class="logout-button" type="button">
           <svg class="nexus-icon" aria-hidden="true"><use href="#nx-logout"></use></svg>
-          <span>Logout</span>
+          <span>Keluar</span>
         </button>
       </div>
     </aside>
@@ -406,21 +428,31 @@
 
             <div>
               <strong>Endfield Protocol</strong>
-              <small>Operator Dashboard</small>
+              <small>Dasbor Operator</small>
             </div>
           </div>
 
           <div class="desktop-topbar-copy">
             <span class="topbar-path">ENDFIELD PROTOCOL</span>
-            <strong>Operator Dashboard</strong>
+            <strong>Dasbor Operator</strong>
           </div>
         </div>
 
         <div class="topbar-actions">
           <div class="topbar-status">
             <span id="networkIndicator" class="online-dot"></span>
-            <span>Command Link Stable</span>
+            <span>Tautan Komando Stabil</span>
           </div>
+
+          <button
+            id="themeToggleButton"
+            class="theme-toggle-button"
+            type="button"
+            aria-label="Ganti tema terang/gelap"
+            data-testid="theme-toggle-button">
+            <svg class="nexus-icon theme-icon-moon" aria-hidden="true"><use href="#nx-moon"></use></svg>
+            <svg class="nexus-icon theme-icon-sun" aria-hidden="true"><use href="#nx-sun"></use></svg>
+          </button>
 
           <div class="notification-center">
             <button
@@ -459,25 +491,25 @@
               <use href="#nx-warning"></use>
             </svg>
             <div>
-              <strong id="backendCompatibilityTitle">Backend update required</strong>
-              <span id="backendCompatibilityMessage">Checking Google Apps Script compatibility...</span>
+              <strong id="backendCompatibilityTitle">Backend perlu diperbarui</strong>
+              <span id="backendCompatibilityMessage">Memeriksa kompatibilitas Google Apps Script...</span>
             </div>
-            <button id="recheckBackendButton" type="button">Recheck</button>
+            <button id="recheckBackendButton" type="button">Periksa Ulang</button>
           </div>
           <section class="page-heading command-hero">
             <div class="command-hero-copy">
               <span class="hero-kicker">
-                ENDFIELD INDUSTRIES // OPERATOR NETWORK
+                ENDFIELD INDUSTRIES // JARINGAN OPERATOR
               </span>
 
               <div class="page-title-row">
-                <h1>Command Nexus</h1>
+                <h1>Pusat Komando</h1>
                 <span class="badge">Reliability 3.1.2</span>
               </div>
 
               <p>
-                Live account telemetry, energy control,
-                task monitoring, and attendance protocol.
+                Telemetri akun langsung, kontrol energi,
+                pemantauan tugas, dan protokol absensi.
               </p>
             </div>
 
@@ -485,24 +517,24 @@
               <div class="hero-status-item">
                 <span class="hero-status-dot online"></span>
                 <div>
-                  <small>Telemetry</small>
-                  <strong>Live feed</strong>
+                  <small>Telemetri</small>
+                  <strong>Umpan langsung</strong>
                 </div>
               </div>
 
               <div class="hero-status-item">
                 <span class="hero-status-dot secure"></span>
                 <div>
-                  <small>Session</small>
-                  <strong>Encrypted</strong>
+                  <small>Sesi</small>
+                  <strong>Terenkripsi</strong>
                 </div>
               </div>
 
               <div class="hero-status-item">
                 <span class="hero-status-dot core"></span>
                 <div>
-                  <small>Core</small>
-                  <strong>Operational</strong>
+                  <small>Inti</small>
+                  <strong>Operasional</strong>
                 </div>
               </div>
             </div>
@@ -511,19 +543,19 @@
           <section class="account-summary-grid" aria-label="Account summary">
             <article class="summary-card">
               <span class="summary-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-accounts"></use></svg></span>
-              <div><small>Accounts Online</small><strong id="summaryAccountsOnline">—</strong></div>
+              <div><small>Akun Online</small><strong id="summaryAccountsOnline">—</strong></div>
             </article>
             <article class="summary-card">
               <span class="summary-icon energy"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-energy"></use></svg></span>
-              <div><small>Energy Full</small><strong id="summaryEnergyFull">—</strong></div>
+              <div><small>Energi Penuh</small><strong id="summaryEnergyFull">—</strong></div>
             </article>
             <article class="summary-card">
               <span class="summary-icon warning"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-warning"></use></svg></span>
-              <div><small>Tasks Incomplete</small><strong id="summaryTasksIncomplete">—</strong></div>
+              <div><small>Tugas Belum Selesai</small><strong id="summaryTasksIncomplete">—</strong></div>
             </article>
             <article class="summary-card">
               <span class="summary-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-check"></use></svg></span>
-              <div><small>Last Check-in</small><strong id="summaryLastCheckin">Waiting</strong></div>
+              <div><small>Absen Terakhir</small><strong id="summaryLastCheckin">Menunggu</strong></div>
             </article>
           </section>
 
@@ -532,19 +564,19 @@
                     class="action-button primary"
                     type="button">
               <span class="button-svg-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-daily-check"></use></svg></span>
-              <span>Execute Check-in</span>
+              <span>Jalankan Absen</span>
             </button>
 
             <button id="refreshButton"
                     class="action-button"
                     type="button">
               <span class="button-svg-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-sync"></use></svg></span>
-              <span>Sync Telemetry</span>
+              <span>Sinkron Telemetri</span>
             </button>
 
             <button id="syncSelectedButton" class="action-button compact-action" type="button">
               <span class="button-svg-icon"><svg class="nexus-icon" aria-hidden="true"><use href="#nx-sync"></use></svg></span>
-              <span>Sync This Account</span>
+              <span>Sinkron Akun Ini</span>
             </button>
 
             <span id="toolbarInfo" aria-hidden="true"></span>
@@ -555,8 +587,8 @@
             <article class="panel user-panel">
               <header class="panel-header">
                 <div>
-                  <h2>Operator Identity</h2>
-                  <small>Account / Identity Matrix</small>
+                  <h2>Identitas Operator</h2>
+                  <small>Akun / Matriks Identitas</small>
                 </div>
                 <span>01</span>
               </header>
@@ -569,7 +601,7 @@
                 <div class="profile-identity profile-identity-clean">
                   <div class="profile-command-copy">
                     <span class="profile-command-kicker">
-                      ACTIVE OPERATOR
+                      OPERATOR AKTIF
                     </span>
                     <h3 id="profileName">—</h3>
                     <p id="profileLevelLabel">Lv.—</p>
@@ -578,8 +610,8 @@
                   <div class="profile-link-state">
                     <span class="profile-link-dot"></span>
                     <div>
-                      <small>Identity Link</small>
-                      <strong>Connected</strong>
+                      <small>Tautan Identitas</small>
+                      <strong>Terhubung</strong>
                     </div>
                   </div>
                 </div>
@@ -604,7 +636,7 @@
 
                 <div class="profile-stats">
                   <div class="metric-box">
-                    <span>Operators</span>
+                    <span>Operator</span>
                     <strong id="operatorCount">—</strong>
                   </div>
 
@@ -614,7 +646,7 @@
                   </div>
 
                   <div class="metric-box">
-                    <span>Exploration Level</span>
+                    <span>Level Eksplorasi</span>
                     <strong id="explorationLevel">—</strong>
                   </div>
                 </div>
@@ -624,8 +656,8 @@
             <article class="panel stamina-panel">
               <header class="panel-header">
                 <div>
-                  <h2>Energy Core</h2>
-                  <small>Sanity / Regeneration Cycle</small>
+                  <h2>Inti Energi</h2>
+                  <small>Sanity / Siklus Regenerasi</small>
                 </div>
                 <span>02</span>
               </header>
@@ -646,14 +678,14 @@
 
                   <div class="energy-reactor-head">
                     <div>
-                      <span>Core Charge</span>
+                      <span>Muatan Inti</span>
                       <strong id="sanityPercent">—%</strong>
                     </div>
 
                     <span
                       id="sanityGaugeCaption"
                       class="energy-reactor-state">
-                      Waiting for telemetry
+                      Menunggu telemetri
                     </span>
                   </div>
 
@@ -680,7 +712,7 @@
 
                   <div class="energy-reactor-readout">
                     <div>
-                      <span>Stored Energy</span>
+                      <span>Energi Tersimpan</span>
                       <strong>
                         <b id="sanityCurrent">—</b>
                         <small>
@@ -690,13 +722,13 @@
                     </div>
 
                     <div>
-                      <span>Full Recovery</span>
+                      <span>Pemulihan Penuh</span>
                       <strong id="sanityRecoveryTime">—</strong>
                     </div>
                   </div>
 
                   <div class="energy-reactor-footer">
-                    <span>Last telemetry</span>
+                    <span>Telemetri terakhir</span>
                     <strong id="dataUpdatedAt">—</strong>
                   </div>
                 </div>
@@ -706,8 +738,8 @@
             <article class="panel activity-panel">
               <header class="panel-header">
                 <div>
-                  <h2>Mission Progress</h2>
-                  <small>Daily / Weekly Protocol</small>
+                  <h2>Progres Misi</h2>
+                  <small>Protokol Harian / Mingguan</small>
                 </div>
                 <span>03</span>
               </header>
@@ -720,7 +752,7 @@
 
                 <div class="task-block task-daily">
                   <div class="task-heading">
-                    <span class="task-title-group"><span>Activity Points</span><em id="dailyState" class="task-state">WAITING</em></span>
+                    <span class="task-title-group"><span>Poin Aktivitas</span><em id="dailyState" class="task-state">MENUNGGU</em></span>
                     <strong class="task-value">
                       <span class="task-fraction">
                         <b id="dailyCurrent">—</b>
@@ -746,7 +778,7 @@
 
                 <div class="task-block task-weekly">
                   <div class="task-heading">
-                    <span class="task-title-group"><span>Weekly Routine</span><em id="weeklyState" class="task-state">WAITING</em></span>
+                    <span class="task-title-group"><span>Rutinitas Mingguan</span><em id="weeklyState" class="task-state">MENUNGGU</em></span>
                     <strong class="task-value">
                       <span class="task-fraction">
                         <b id="weeklyCurrent">—</b>
@@ -772,7 +804,7 @@
 
                 <div class="task-block task-protocol">
                   <div class="task-heading">
-                    <span class="task-title-group"><span>Protocol Pass</span><em id="protocolState" class="task-state">WAITING</em></span>
+                    <span class="task-title-group"><span>Protocol Pass</span><em id="protocolState" class="task-state">MENUNGGU</em></span>
                     <strong class="task-value">
                       <span class="task-fraction">
                         <b id="protocolCurrent">—</b>
@@ -802,8 +834,8 @@
           <section class="panel status-panel">
             <header class="panel-header">
               <div>
-                <h2>Network Integrity</h2>
-                <small>Source Link / Telemetry Health</small>
+                <h2>Integritas Jaringan</h2>
+                <small>Tautan Sumber / Kesehatan Telemetri</small>
               </div>
               <span>04</span>
             </header>
@@ -814,27 +846,27 @@
 
             <div class="status-body">
               <div class="status-item">
-                <span>Username</span>
+                <span>Nama Pengguna</span>
                 <strong id="selectedAccountStatus">—</strong>
               </div>
               <div class="status-item">
-                <span>Profile source</span>
-                <strong id="profileSourceStatus">Waiting</strong>
+                <span>Sumber profil</span>
+                <strong id="profileSourceStatus">Menunggu</strong>
               </div>
               <div class="status-item">
-                <span>Live source</span>
-                <strong id="liveSourceStatus">Waiting</strong>
+                <span>Sumber langsung</span>
+                <strong id="liveSourceStatus">Menunggu</strong>
               </div>
               <div class="status-item">
-                <span>Browser refresh</span>
+                <span>Segar browser</span>
                 <strong id="browserRefreshAt">—</strong>
               </div>
               <div class="status-item">
-                <span>Data freshness</span>
-                <strong id="dataFreshnessStatus" class="freshness-badge waiting">WAITING</strong>
+                <span>Kesegaran data</span>
+                <strong id="dataFreshnessStatus" class="freshness-badge waiting">MENUNGGU</strong>
               </div>
               <div class="status-item">
-                <span>Last successful request</span>
+                <span>Permintaan sukses terakhir</span>
                 <strong id="lastSuccessfulRequest">—</strong>
               </div>
             </div>
@@ -851,35 +883,35 @@
   <div id="accountManagerOverlay" class="utility-overlay" hidden>
     <section class="utility-modal account-manager-modal" role="dialog" aria-modal="true" aria-labelledby="accountManagerTitle">
       <header class="utility-header">
-        <div><span>ACCOUNT CONTROL</span><h2 id="accountManagerTitle">Account Manager</h2></div>
+        <div><span>KONTROL AKUN</span><h2 id="accountManagerTitle">Manajer Akun</h2></div>
         <button id="closeAccountManager" class="utility-close" type="button" aria-label="Tutup"><svg class="nexus-icon"><use href="#nx-close"></use></svg></button>
       </header>
       <div class="account-manager-layout">
         <aside id="managerAccountList" class="manager-account-list"></aside>
         <div class="manager-editor">
           <div class="manager-selected-head">
-            <div><small>SELECTED ACCOUNT</small><strong id="managerAccountName">—</strong><span id="managerAccountUid">UID —</span></div>
-            <button id="managerPrimaryButton" class="icon-command-button" type="button"><svg class="nexus-icon"><use href="#nx-star"></use></svg><span>Primary</span></button>
+            <div><small>AKUN TERPILIH</small><strong id="managerAccountName">—</strong><span id="managerAccountUid">UID —</span></div>
+            <button id="managerPrimaryButton" class="icon-command-button" type="button"><svg class="nexus-icon"><use href="#nx-star"></use></svg><span>Utama</span></button>
           </div>
-          <label class="manager-field">Display name<input id="managerDisplayName" type="text" maxlength="40" placeholder="Nama tampilan"></label>
+          <label class="manager-field">Nama tampilan<input id="managerDisplayName" type="text" maxlength="40" placeholder="Nama tampilan"></label>
           <div class="manager-order-actions">
-            <button id="managerMoveUp" type="button"><svg class="nexus-icon"><use href="#nx-up"></use></svg>Move Up</button>
-            <button id="managerMoveDown" type="button"><svg class="nexus-icon"><use href="#nx-down"></use></svg>Move Down</button>
+            <button id="managerMoveUp" type="button"><svg class="nexus-icon"><use href="#nx-up"></use></svg>Naikkan</button>
+            <button id="managerMoveDown" type="button"><svg class="nexus-icon"><use href="#nx-down"></use></svg>Turunkan</button>
           </div>
           <fieldset class="manager-notification-settings">
-            <legend>Notifications for this account</legend>
-            <label><input id="notifyEnergyFull" type="checkbox">Energy Full</label>
-            <label><input id="notifyDailyZero" type="checkbox">Daily 0/100</label>
-            <label><input id="notifyWeeklyIncomplete" type="checkbox">Weekly Incomplete</label>
-            <label><input id="notifyCheckinFailed" type="checkbox">Check-in Failed</label>
+            <legend>Notifikasi untuk akun ini</legend>
+            <label><input id="notifyEnergyFull" type="checkbox">Energi Penuh</label>
+            <label><input id="notifyDailyZero" type="checkbox">Harian 0/100</label>
+            <label><input id="notifyWeeklyIncomplete" type="checkbox">Mingguan Belum Selesai</label>
+            <label><input id="notifyCheckinFailed" type="checkbox">Absen Gagal</label>
           </fieldset>
-          <label class="manager-field">Update account_token<textarea id="managerTokenResponse" rows="4" placeholder='Tempel respons {"data":{"content":"TOKEN"}}'></textarea></label>
-          <div id="managerStatus" class="manager-status">Ready.</div>
+          <label class="manager-field">Perbarui account_token<textarea id="managerTokenResponse" rows="4" placeholder='Tempel respons {"data":{"content":"TOKEN"}}'></textarea></label>
+          <div id="managerStatus" class="manager-status">Siap.</div>
           <div class="manager-action-grid">
-            <button id="managerSave" class="action-button primary" type="button">Save Settings</button>
-            <button id="managerSync" class="action-button" type="button">Sync This Account</button>
-            <button id="managerUpdateToken" class="action-button" type="button">Update Token</button>
-            <button id="managerDelete" class="danger-action" type="button">Delete Account</button>
+            <button id="managerSave" class="action-button primary" type="button">Simpan Setelan</button>
+            <button id="managerSync" class="action-button" type="button">Sinkron Akun Ini</button>
+            <button id="managerUpdateToken" class="action-button" type="button">Perbarui Token</button>
+            <button id="managerDelete" class="danger-action" type="button">Hapus Akun</button>
           </div>
         </div>
       </div>
@@ -889,32 +921,32 @@
   <div id="diagnosticsOverlay" class="utility-overlay" hidden>
     <section class="utility-modal diagnostics-modal" role="dialog" aria-modal="true" aria-labelledby="diagnosticsTitle">
       <header class="utility-header">
-        <div><span>SYSTEM STATUS</span><h2 id="diagnosticsTitle">System Diagnostics</h2></div>
+        <div><span>STATUS SISTEM</span><h2 id="diagnosticsTitle">Diagnostik Sistem</h2></div>
         <button id="closeDiagnostics" class="utility-close" type="button" aria-label="Tutup"><svg class="nexus-icon"><use href="#nx-close"></use></svg></button>
       </header>
       <div class="diagnostics-grid">
-        <div><span>Frontend version</span><strong id="diagFrontendVersion">31.2</strong></div>
-        <div><span>GAS API version</span><strong id="diagApiVersion">Checking...</strong></div>
-        <div><span>Backend compatibility</span><strong id="diagBackendCompatibility">Checking...</strong></div>
-        <div><span>Missing actions</span><strong id="diagMissingActions">—</strong></div>
-        <div><span>Available actions</span><strong id="diagActions">—</strong></div>
-        <div><span>Last successful request</span><strong id="diagLastSuccess">—</strong></div>
-        <div><span>Average response time</span><strong id="diagAvgResponse">—</strong></div>
-        <div><span>Notification permission</span><strong id="diagNotifications">—</strong></div>
-        <div><span>Browser storage</span><strong id="diagStorage">—</strong></div>
-        <div><span>Selected token health</span><strong id="diagTokenStatus">—</strong></div>
-        <div><span>PWA status</span><strong id="diagPwaStatus">—</strong></div>
-        <div><span>Tracked URL Fetch today</span><strong id="diagQuotaFetches">—</strong></div>
-        <div><span>API requests today</span><strong id="diagQuotaRequests">—</strong></div>
-        <div><span>Failures today</span><strong id="diagQuotaFailures">—</strong></div>
-        <div><span>Offline retry queue</span><strong id="diagRetryQueue">—</strong></div>
-        <div><span>Push subscription</span><strong id="diagPushStatus">—</strong></div>
-        <div><span>Performance mode</span><strong id="diagPerformanceMode">—</strong></div>
+        <div><span>Versi frontend</span><strong id="diagFrontendVersion">31.2</strong></div>
+        <div><span>Versi API GAS</span><strong id="diagApiVersion">Checking...</strong></div>
+        <div><span>Kompatibilitas backend</span><strong id="diagBackendCompatibility">Checking...</strong></div>
+        <div><span>Aksi hilang</span><strong id="diagMissingActions">—</strong></div>
+        <div><span>Aksi tersedia</span><strong id="diagActions">—</strong></div>
+        <div><span>Permintaan sukses terakhir</span><strong id="diagLastSuccess">—</strong></div>
+        <div><span>Rata-rata waktu respons</span><strong id="diagAvgResponse">—</strong></div>
+        <div><span>Izin notifikasi</span><strong id="diagNotifications">—</strong></div>
+        <div><span>Penyimpanan browser</span><strong id="diagStorage">—</strong></div>
+        <div><span>Kesehatan token terpilih</span><strong id="diagTokenStatus">—</strong></div>
+        <div><span>Status PWA</span><strong id="diagPwaStatus">—</strong></div>
+        <div><span>URL Fetch terlacak hari ini</span><strong id="diagQuotaFetches">—</strong></div>
+        <div><span>Permintaan API hari ini</span><strong id="diagQuotaRequests">—</strong></div>
+        <div><span>Kegagalan hari ini</span><strong id="diagQuotaFailures">—</strong></div>
+        <div><span>Antrean ulang offline</span><strong id="diagRetryQueue">—</strong></div>
+        <div><span>Langganan push</span><strong id="diagPushStatus">—</strong></div>
+        <div><span>Mode performa</span><strong id="diagPerformanceMode">—</strong></div>
       </div>
       <div class="diagnostics-actions">
-        <button id="diagnosticsRefresh" class="action-button" type="button">Run Diagnostics</button>
-        <button id="installPwaButton" class="action-button primary" type="button" hidden><svg class="nexus-icon"><use href="#nx-download"></use></svg>Install App</button>
-        <button id="clearAppCacheButton" class="action-button" type="button">Clear App Cache</button>
+        <button id="diagnosticsRefresh" class="action-button" type="button">Jalankan Diagnostik</button>
+        <button id="installPwaButton" class="action-button primary" type="button" hidden><svg class="nexus-icon"><use href="#nx-download"></use></svg>Pasang Aplikasi</button>
+        <button id="clearAppCacheButton" class="action-button" type="button">Bersihkan Cache Aplikasi</button>
       </div>
     </section>
   </div>
@@ -922,40 +954,40 @@
   <div id="historyOverlay" class="utility-overlay" hidden>
     <section class="utility-modal reliability-modal history-modal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
       <header class="utility-header">
-        <div><span>ACCOUNT ANALYTICS</span><h2 id="historyTitle">History Center</h2></div>
+        <div><span>ANALITIK AKUN</span><h2 id="historyTitle">Pusat Riwayat</h2></div>
         <button id="closeHistory" class="utility-close" type="button" aria-label="Tutup"><svg class="nexus-icon"><use href="#nx-close"></use></svg></button>
       </header>
       <div class="reliability-toolbar">
-        <label>Account<select id="historyAccountSelect"></select></label>
-        <button id="refreshHistory" class="action-button" type="button">Refresh History</button>
+        <label>Akun<select id="historyAccountSelect"></select></label>
+        <button id="refreshHistory" class="action-button" type="button">Segarkan Riwayat</button>
       </div>
       <div id="historyBackendStatus" class="feature-backend-status" hidden></div>
-      <div id="historyStatus" class="reliability-status">Waiting for history data.</div>
+      <div id="historyStatus" class="reliability-status">Menunggu data riwayat.</div>
       <div class="history-summary-grid">
         <section class="history-summary-card">
-          <header><span>Energy</span><strong id="historySummaryEnergy">—</strong></header>
-          <small id="historySummaryEnergyDetail">Latest reading</small>
+          <header><span>Energi</span><strong id="historySummaryEnergy">—</strong></header>
+          <small id="historySummaryEnergyDetail">Bacaan terbaru</small>
         </section>
         <section class="history-summary-card">
-          <header><span>Check-ins</span><strong id="historySummaryCheckin">—</strong></header>
-          <small id="historySummaryCheckinDetail">Success / total</small>
+          <header><span>Absen</span><strong id="historySummaryCheckin">—</strong></header>
+          <small id="historySummaryCheckinDetail">Sukses / total</small>
         </section>
         <section class="history-summary-card">
-          <header><span>API Uptime</span><strong id="historySummaryUptime">—</strong></header>
-          <small id="historySummaryUptimeDetail">Success rate</small>
+          <header><span>Uptime API</span><strong id="historySummaryUptime">—</strong></header>
+          <small id="historySummaryUptimeDetail">Tingkat keberhasilan</small>
         </section>
       </div>
       <div class="history-grid">
         <article class="history-card history-card-wide">
-          <header><span>24H ENERGY TREND</span><strong id="historySanitySummary">—</strong></header>
+          <header><span>TREN ENERGI 24J</span><strong id="historySanitySummary">—</strong></header>
           <svg id="historySanityChart" class="history-chart" viewBox="0 0 640 220" role="img" aria-label="Sanity history chart"></svg>
         </article>
         <article class="history-card">
-          <header><span>30D CHECK-IN</span><strong id="historyCheckinSummary">—</strong></header>
+          <header><span>ABSEN 30H</span><strong id="historyCheckinSummary">—</strong></header>
           <div id="historyCheckinList" class="history-event-list"></div>
         </article>
         <article class="history-card uptime-card">
-          <header><span>API UPTIME</span><strong id="historyUptimeSummary">—</strong></header>
+          <header><span>UPTIME API</span><strong id="historyUptimeSummary">—</strong></header>
           <div id="historyUptimeChart" class="uptime-ring"></div>
         </article>
       </div>
@@ -965,15 +997,15 @@
   <div id="tokenHealthOverlay" class="utility-overlay" hidden>
     <section class="utility-modal reliability-modal token-health-modal" role="dialog" aria-modal="true" aria-labelledby="tokenHealthTitle">
       <header class="utility-header">
-        <div><span>AUTHENTICATION INTEGRITY</span><h2 id="tokenHealthTitle">Token Health Center</h2></div>
+        <div><span>INTEGRITAS OTENTIKASI</span><h2 id="tokenHealthTitle">Pusat Kesehatan Token</h2></div>
         <button id="closeTokenHealth" class="utility-close" type="button" aria-label="Tutup"><svg class="nexus-icon"><use href="#nx-close"></use></svg></button>
       </header>
       <div class="reliability-toolbar">
         <p>Validasi manual dapat memakai beberapa request API. Jalankan saat diperlukan.</p>
-        <button id="runTokenHealth" class="action-button primary" type="button">Validate All Tokens</button>
+        <button id="runTokenHealth" class="action-button primary" type="button">Validasi Semua Token</button>
       </div>
       <div id="tokenHealthBackendStatus" class="feature-backend-status" hidden></div>
-      <div id="tokenHealthStatus" class="reliability-status">Select validation to inspect linked sessions.</div>
+      <div id="tokenHealthStatus" class="reliability-status">Pilih validasi untuk memeriksa sesi tertaut.</div>
       <div id="tokenHealthList" class="token-health-list"></div>
     </section>
   </div>
@@ -981,66 +1013,66 @@
   <div id="settingsCenterOverlay" class="utility-overlay" hidden>
     <section class="utility-modal reliability-modal settings-center-modal" role="dialog" aria-modal="true" aria-labelledby="settingsCenterTitle">
       <header class="utility-header">
-        <div><span>RELIABILITY SUITE</span><h2 id="settingsCenterTitle">Settings & Resilience</h2></div>
+        <div><span>SUITE KEANDALAN</span><h2 id="settingsCenterTitle">Setelan & Ketahanan</h2></div>
         <button id="closeSettingsCenter" class="utility-close" type="button" aria-label="Tutup"><svg class="nexus-icon"><use href="#nx-close"></use></svg></button>
       </header>
 
       <div class="settings-section-grid">
         <article class="settings-module">
-          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-gauge"></use></svg><div><strong>Performance Mode</strong><span>Control animation and sync frequency.</span></div></div>
+          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-gauge"></use></svg><div><strong>Mode Performa</strong><span>Atur animasi dan frekuensi sinkronisasi.</span></div></div>
           <div class="performance-mode-grid">
-            <label><input type="radio" name="performanceMode" value="visual"><span><strong>Visual</strong><small>5s sync • full motion</small></span></label>
-            <label><input type="radio" name="performanceMode" value="balanced"><span><strong>Balanced</strong><small>10s sync • light motion</small></span></label>
-            <label><input type="radio" name="performanceMode" value="battery"><span><strong>Battery Saver</strong><small>30s sync • motion off</small></span></label>
+            <label><input type="radio" name="performanceMode" value="visual"><span><strong>Visual</strong><small>sinkron 5d • gerak penuh</small></span></label>
+            <label><input type="radio" name="performanceMode" value="balanced"><span><strong>Seimbang</strong><small>sinkron 10d • gerak ringan</small></span></label>
+            <label><input type="radio" name="performanceMode" value="battery"><span><strong>Hemat Baterai</strong><small>sinkron 30d • gerak mati</small></span></label>
           </div>
         </article>
 
         <article class="settings-module">
-          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-push"></use></svg><div><strong>True Web Push</strong><span>Receive alerts after the dashboard is closed.</span></div></div>
-          <div id="pushSetupStatus" class="settings-inline-status">Checking browser support...</div>
+          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-push"></use></svg><div><strong>Web Push Asli</strong><span>Terima peringatan setelah dasbor ditutup.</span></div></div>
+          <div id="pushSetupStatus" class="settings-inline-status">Memeriksa dukungan browser...</div>
           <div class="settings-action-row">
-            <button id="enablePushButton" class="action-button primary" type="button">Enable Push</button>
-            <button id="disablePushButton" class="action-button" type="button">Disable</button>
-            <button id="testPushButton" class="action-button" type="button">Test Notification</button>
+            <button id="enablePushButton" class="action-button primary" type="button">Aktifkan Push</button>
+            <button id="disablePushButton" class="action-button" type="button">Nonaktifkan</button>
+            <button id="testPushButton" class="action-button" type="button">Uji Notifikasi</button>
           </div>
         </article>
 
         <article class="settings-module">
-          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-fingerprint"></use></svg><div><strong>Device Passkey Unlock</strong><span>Use fingerprint, face unlock, or device PIN as a local convenience unlock.</span></div></div>
-          <div id="passkeyStatus" class="settings-inline-status">Checking WebAuthn...</div>
+          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-fingerprint"></use></svg><div><strong>Buka dengan Passkey Perangkat</strong><span>Gunakan sidik jari, face unlock, atau PIN perangkat sebagai pembuka lokal yang praktis.</span></div></div>
+          <div id="passkeyStatus" class="settings-inline-status">Memeriksa WebAuthn...</div>
           <div class="settings-action-row">
-            <button id="registerPasskeyButton" class="action-button primary" type="button">Register Device</button>
-            <button id="removePasskeyButton" class="action-button" type="button">Remove Passkey</button>
+            <button id="registerPasskeyButton" class="action-button primary" type="button">Daftarkan Perangkat</button>
+            <button id="removePasskeyButton" class="action-button" type="button">Hapus Passkey</button>
           </div>
         </article>
 
         <article class="settings-module">
-          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-backup"></use></svg><div><strong>Backup & Restore</strong><span>Export account order, names, notification rules, and UI settings. Tokens are excluded.</span></div></div>
+          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-backup"></use></svg><div><strong>Cadangkan & Pulihkan</strong><span>Ekspor urutan akun, nama, aturan notifikasi, dan setelan UI. Token tidak disertakan.</span></div></div>
           <input id="restoreConfigInput" type="file" accept="application/json,.json" hidden>
           <div class="settings-action-row">
-            <button id="exportConfigButton" class="action-button primary" type="button">Export Backup</button>
-            <button id="restoreConfigButton" class="action-button" type="button">Restore Backup</button>
+            <button id="exportConfigButton" class="action-button primary" type="button">Ekspor Cadangan</button>
+            <button id="restoreConfigButton" class="action-button" type="button">Pulihkan Cadangan</button>
           </div>
-          <div id="backupStatus" class="settings-inline-status">No backup operation running.</div>
+          <div id="backupStatus" class="settings-inline-status">Tidak ada operasi pencadangan berjalan.</div>
         </article>
 
         <article class="settings-module">
-          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-sync"></use></svg><div><strong>Background Retry</strong><span>Queue Check-in and Sync operations while offline.</span></div></div>
+          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-sync"></use></svg><div><strong>Coba Ulang Latar</strong><span>Antrekan operasi Absen dan Sinkron saat offline.</span></div></div>
           <div class="retry-status-grid">
-            <div><span>Queued operations</span><strong id="settingsRetryCount">0</strong></div>
-            <div><span>Background Sync</span><strong id="settingsBackgroundSync">Checking</strong></div>
+            <div><span>Operasi antre</span><strong id="settingsRetryCount">0</strong></div>
+            <div><span>Sinkron Latar</span><strong id="settingsBackgroundSync">Memeriksa</strong></div>
           </div>
-          <button id="retryQueuedOperationsButton" class="action-button" type="button">Retry Queue Now</button>
+          <button id="retryQueuedOperationsButton" class="action-button" type="button">Coba Antrean Sekarang</button>
         </article>
 
         <article class="settings-module">
-          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-gauge"></use></svg><div><strong>Quota Guard</strong><span>Tracked usage is an application estimate, not Google's official remaining quota.</span></div></div>
+          <div class="settings-module-head"><svg class="nexus-icon"><use href="#nx-gauge"></use></svg><div><strong>Penjaga Kuota</strong><span>Penggunaan terlacak adalah estimasi aplikasi, bukan sisa kuota resmi Google.</span></div></div>
           <div class="quota-mini-grid">
             <div><span>Requests</span><strong id="settingsQuotaRequests">—</strong></div>
             <div><span>URL Fetch</span><strong id="settingsQuotaFetches">—</strong></div>
             <div><span>Failures</span><strong id="settingsQuotaFailures">—</strong></div>
           </div>
-          <button id="refreshQuotaButton" class="action-button" type="button">Refresh Quota Guard</button>
+          <button id="refreshQuotaButton" class="action-button" type="button">Segarkan Penjaga Kuota</button>
         </article>
       </div>
     </section>
@@ -1298,8 +1330,8 @@
     hidden>
     <div class="notification-panel-header">
       <div>
-        <span class="notification-kicker">SYSTEM ALERTS</span>
-        <h2>Notifications</h2>
+        <span class="notification-kicker">PERINGATAN SISTEM</span>
+        <h2>Notifikasi</h2>
       </div>
 
       <button
@@ -1336,11 +1368,11 @@
        aria-live="polite"></div>
 
   <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-    <button id="bottomDashboard" class="mobile-bottom-item active" type="button"><svg class="nexus-icon"><use href="#nx-dashboard"></use></svg><span>Dashboard</span></button>
-    <button id="bottomAccounts" class="mobile-bottom-item" type="button"><svg class="nexus-icon"><use href="#nx-accounts"></use></svg><span>Accounts</span></button>
-    <button id="bottomCheckin" class="mobile-bottom-item primary" type="button"><svg class="nexus-icon"><use href="#nx-check"></use></svg><span>Check-in</span></button>
-    <button id="bottomAlerts" class="mobile-bottom-item" type="button"><svg class="nexus-icon"><use href="#nx-bell"></use></svg><span>Alerts</span><em id="bottomAlertBadge" hidden>0</em></button>
-    <button id="bottomSettings" class="mobile-bottom-item" type="button"><svg class="nexus-icon"><use href="#nx-settings"></use></svg><span>Settings</span></button>
+    <button id="bottomDashboard" class="mobile-bottom-item active" type="button"><svg class="nexus-icon"><use href="#nx-dashboard"></use></svg><span>Dasbor</span></button>
+    <button id="bottomAccounts" class="mobile-bottom-item" type="button"><svg class="nexus-icon"><use href="#nx-accounts"></use></svg><span>Akun</span></button>
+    <button id="bottomCheckin" class="mobile-bottom-item primary" type="button"><svg class="nexus-icon"><use href="#nx-check"></use></svg><span>Absen</span></button>
+    <button id="bottomAlerts" class="mobile-bottom-item" type="button"><svg class="nexus-icon"><use href="#nx-bell"></use></svg><span>Notif</span><em id="bottomAlertBadge" hidden>0</em></button>
+    <button id="bottomSettings" class="mobile-bottom-item" type="button"><svg class="nexus-icon"><use href="#nx-settings"></use></svg><span>Setelan</span></button>
   </nav>
 
   <div id="loginLayer" class="login-layer">
@@ -1362,29 +1394,29 @@
       </div>
 
       <div class="login-visual-copy">
-        <span>PRIVATE OPERATOR NETWORK</span>
-        <h2>Control every linked account from one terminal.</h2>
+        <span>JARINGAN OPERATOR PRIBADI</span>
+        <h2>Kontrol setiap akun tertaut dari satu terminal.</h2>
         <p>
-          Account telemetry, Sanity monitoring, mission progress,
-          notifications, and automated attendance in one secure interface.
+          Telemetri akun, pemantauan Sanity, progres misi,
+          notifikasi, dan absensi otomatis dalam satu antarmuka aman.
         </p>
       </div>
 
       <div class="login-system-list">
         <div>
           <span>01</span>
-          <strong>Identity Matrix</strong>
-          <small>Multi-account operator profiles</small>
+          <strong>Matriks Identitas</strong>
+          <small>Profil operator multi-akun</small>
         </div>
         <div>
           <span>02</span>
-          <strong>Energy Telemetry</strong>
-          <small>Live Sanity recovery monitoring</small>
+          <strong>Telemetri Energi</strong>
+          <small>Pemantauan pemulihan Sanity langsung</small>
         </div>
         <div>
           <span>03</span>
-          <strong>Protocol Automation</strong>
-          <small>Attendance and notification routing</small>
+          <strong>Otomasi Protokol</strong>
+          <small>Perutean absensi dan notifikasi</small>
         </div>
       </div>
 
@@ -1400,21 +1432,21 @@
       <div class="login-card-head">
         <div>
           <div class="login-kicker">
-            SECURE ACCESS // LEVEL 06
+            AKSES AMAN // LEVEL 06
           </div>
 
-          <h2>Authorize operator</h2>
+          <h2>Otorisasi operator</h2>
         </div>
 
         <span class="login-security-mark">AUTH</span>
       </div>
 
       <p>
-        Enter the six-digit command PIN to establish a private session.
+        Masukkan PIN komando enam digit untuk memulai sesi pribadi.
       </p>
 
       <label for="pinInput" class="login-input-label">
-        Command PIN
+        PIN Komando
       </label>
 
       <div class="pin-field">
@@ -1431,22 +1463,22 @@
       <button id="loginButton"
               class="login-button"
               type="submit">
-        <span>Authorize Session</span>
+        <span>Otorisasi Sesi</span>
       </button>
 
       <button id="passkeyLoginButton" class="passkey-login-button" type="button" hidden>
         <svg class="nexus-icon" aria-hidden="true"><use href="#nx-fingerprint"></use></svg>
-        <span>Unlock with Device Passkey</span>
+        <span>Buka dengan Passkey Perangkat</span>
       </button>
 
       <div id="loginMessage"
            class="login-message">
-        STATUS // AWAITING AUTHORIZATION
+        STATUS // MENUNGGU OTORISASI
       </div>
 
       <div class="login-encryption-note">
         <span class="online-dot"></span>
-        Local PIN validation • Session-only authorization
+        Validasi PIN lokal • Otorisasi khusus sesi
       </div>
     </form>
   </div>

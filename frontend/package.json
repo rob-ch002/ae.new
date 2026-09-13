@@ -1,0 +1,9 @@
+{
+  "name": "endfield-protocol-static",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static preview server for the Endfield Protocol Dashboard",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
